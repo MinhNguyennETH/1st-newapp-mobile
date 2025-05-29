@@ -33,29 +33,30 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  // Hàm xử lý tìm kiếm tin tức theo từ khóa
   const handleSearch = async (query) => {
     if (query.trim() === '') {
-      fetchNews();
+      fetchNews(); // Nếu từ khóa trống, lấy lại tin tức nổi bật
       return;
     }
 
     if (query.trim().length < 2) {
-      showError('Please enter at least 2 characters to search');
+      showError('Please enter at least 2 characters to search'); // Báo lỗi nếu từ khóa dưới 2 ký tự
       return;
     }
     
     try {
-      setLoading(true);
-      const response = await searchNews(query);
+      setLoading(true); // Bật trạng thái tải
+      const response = await searchNews(query); // Gọi API tìm kiếm tin tức theo từ khóa
       if (response.articles.length === 0) {
-        showError('No results found for your search');
+        showError('No results found for your search'); // Báo lỗi nếu không có kết quả
       }
-      setArticles(response.articles);
+      setArticles(response.articles); // Cập nhật danh sách bài báo
     } catch (error) {
-      console.error('Error searching news:', error);
-      showError(error.message || 'Failed to search news. Please try again.');
+      console.error('Error searching news:', error); // Log lỗi nếu có
+      showError(error.message || 'Failed to search news. Please try again.'); // Hiển thị thông báo lỗi
     } finally {
-      setLoading(false);
+      setLoading(false); // Tắt trạng thái tải
     }
   };
 
@@ -85,11 +86,11 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Searchbar
-        placeholder="Search news..."
-        onChangeText={setSearchQuery}
-        value={searchQuery}
-        onSubmitEditing={() => handleSearch(searchQuery)}
-        style={styles.searchBar}
+        placeholder="Search news..." // Placeholder của thanh tìm kiếm
+        onChangeText={setSearchQuery} // Cập nhật từ khóa khi người dùng nhập
+        value={searchQuery} // Giá trị hiện tại của thanh tìm kiếm
+        onSubmitEditing={() => handleSearch(searchQuery)} // Gọi hàm tìm kiếm khi nhấn Enter
+        style={styles.searchBar} // Áp dụng style cho thanh tìm kiếm
       />
       
       {loading ? (
