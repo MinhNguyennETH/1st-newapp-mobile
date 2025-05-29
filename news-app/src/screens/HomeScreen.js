@@ -39,35 +39,29 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  const handleSearch = async (query, page = 1) => {
+  const handleSearch = async (query) => {
     if (query.trim() === '') {
-      fetchNews(1);
+      fetchNews();
       return;
     }
 
     if (query.trim().length < 2) {
-      showError('Please enter at least 2 characters to search');
+      showError('Please enter at least 2 characters to search'); // Báo lỗi nếu từ khóa dưới 2 ký tự
       return;
     }
     
     try {
       setLoading(true);
-      const response = await searchNews(query, page);
-      const { articles: newArticles, totalResults: total, totalPages: pages } = response;
-
-      if (total === 0) {
+      const response = await searchNews(query);
+      if (response.articles.length === 0) {
         showError('No results found for your search');
       }
-
-      setArticles(newArticles);
-      setTotalResults(total);
-      setTotalPages(pages);
-      setCurrentPage(page);
+      setArticles(response.articles);
     } catch (error) {
-      console.error('Error searching news:', error);
-      showError(error.message || 'Failed to search news. Please try again.');
+      console.error('Error searching news:', error); // Log lỗi nếu có
+      showError(error.message || 'Failed to search news. Please try again.'); // Hiển thị thông báo lỗi
     } finally {
-      setLoading(false);
+      setLoading(false); // Tắt trạng thái tải
     }
   };
 
@@ -208,7 +202,7 @@ const HomeScreen = ({ navigation }) => {
         placeholder="Search news..."
         onChangeText={setSearchQuery}
         value={searchQuery}
-        onSubmitEditing={() => handleSearch(searchQuery, 1)}
+        onSubmitEditing={() => handleSearch(searchQuery)}
         style={styles.searchBar}
       />
       
