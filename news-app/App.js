@@ -1,53 +1,85 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import HomeScreen from './src/screens/HomeScreen';
 import DetailsScreen from './src/screens/DetailsScreen';
+import BookmarksScreen from './src/screens/BookmarksScreen';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: '#1e88e5',
-    accent: '#82b1ff',
-  },
+const HomeStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="HomeScreen" 
+        component={HomeScreen} 
+        options={{ title: 'Tin tức' }}
+      />
+      <Stack.Screen 
+        name="Details" 
+        component={DetailsScreen} 
+        options={{ title: 'Chi tiết' }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const BookmarksStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="BookmarksScreen" 
+        component={BookmarksScreen} 
+        options={{ title: 'Tin đã lưu' }}
+      />
+      <Stack.Screen 
+        name="Details" 
+        component={DetailsScreen} 
+        options={{ title: 'Chi tiết' }}
+      />
+    </Stack.Navigator>
+  );
 };
 
 export default function App() {
   return (
-    <PaperProvider theme={theme}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Home"
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: theme.colors.primary,
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === 'Home') {
+              iconName = 'home';
+            } else if (route.name === 'Bookmarks') {
+              iconName = 'bookmark';
+            }
+            return <Icon name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: '#007AFF',
+          tabBarInactiveTintColor: 'gray',
+        })}
+      >
+        <Tab.Screen 
+          name="Home" 
+          component={HomeStack} 
+          options={{ 
+            headerShown: false,
+            title: 'Trang chủ'
           }}
-        >
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{
-              title: 'News App',
-            }}
-          />
-          <Stack.Screen
-            name="Details"
-            component={DetailsScreen}
-            options={{
-              title: 'Article Details',
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+        />
+        <Tab.Screen 
+          name="Bookmarks" 
+          component={BookmarksStack} 
+          options={{ 
+            headerShown: false,
+            title: 'Đã lưu'
+          }}
+        />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
